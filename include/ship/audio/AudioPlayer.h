@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "ship/audio/AudioChannelsSetting.h"
+#include "ship/audio/AudioResampler.h"
 #include "ship/audio/SoundMatrixDecoder.h"
 
 namespace Ship {

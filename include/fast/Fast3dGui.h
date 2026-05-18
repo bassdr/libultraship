@@ -166,5 +166,8 @@ class Fast3dGui : public Ship::Gui {
     int16_t GetIntegerScaleFactor();
 
     std::unordered_map<std::string, Ship::GuiTextureMetadata> mGuiTextures; ///< Cached GPU texture registry.
+
+    std::shared_ptr<Ship::Window> mWindow;
+    std::shared_ptr<Ship::Window> mBackendWindow;
 };
 } // namespace Fast
