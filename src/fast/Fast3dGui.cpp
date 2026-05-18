@@ -66,8 +66,7 @@ bool Fast3dGui::SupportsViewports() {
 }
 
 void Fast3dGui::HandleWindowEvents(Fast::WindowEvent event) {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mWindow->GetWindowBackend()) {
         case WindowBackend::FAST3D_SDL_OPENGL:
         case WindowBackend::FAST3D_SDL_METAL:
             ImGui_ImplSDL2_ProcessEvent(static_cast<const SDL_Event*>(event.Sdl.Event));
@@ -87,10 +86,11 @@ void Fast3dGui::HandleWindowEvents(Fast::WindowEvent event) {
 }
 
 void Fast3dGui::ImGuiWMInit() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    mInterpreter = std::dynamic_pointer_cast<Fast3dWindow>(window)->GetInterpreterWeak();
+    mWindow = Ship::Context::GetInstance()->GetWindow();
+    if (auto fast3dWindow = std::dynamic_pointer_cast<Fast3dWindow>(mWindow))
+        mInterpreter = fast3dWindow->GetInterpreterWeak();
 
-    switch (window->GetWindowBackend()) {
+    switch (mWindow->GetWindowBackend()) {
         case WindowBackend::FAST3D_SDL_OPENGL:
             SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
             if (Ship::Context::GetInstance()->GetConsoleVariables()->GetInteger(CVAR_ALLOW_BACKGROUND_INPUTS, 1)) {
@@ -118,8 +118,7 @@ void Fast3dGui::ImGuiWMInit() {
 }
 
 void Fast3dGui::ImGuiWMShutdown() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mWindow->GetWindowBackend()) {
 #ifdef ENABLE_OPENGL
         case WindowBackend::FAST3D_SDL_OPENGL:
             ImGui_ImplSDL2_Shutdown();
@@ -138,11 +137,13 @@ void Fast3dGui::ImGuiWMShutdown() {
         default:
             break;
     }
+
+    mWindow = nullptr;
 }
 
 void Fast3dGui::ImGuiBackendInit() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    mBackendWindow = Ship::Context::GetInstance()->GetWindow();
+    switch (mBackendWindow->GetWindowBackend()) {
 #ifdef ENABLE_OPENGL
         case WindowBackend::FAST3D_SDL_OPENGL:
 #ifdef __APPLE__
@@ -175,8 +176,7 @@ void Fast3dGui::ImGuiBackendInit() {
 }
 
 void Fast3dGui::ImGuiBackendShutdown() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mBackendWindow->GetWindowBackend()) {
 #ifdef ENABLE_OPENGL
         case WindowBackend::FAST3D_SDL_OPENGL:
             ImGui_ImplOpenGL3_Shutdown();
@@ -195,11 +195,12 @@ void Fast3dGui::ImGuiBackendShutdown() {
         default:
             break;
     }
+
+    mBackendWindow = nullptr;
 }
 
 void Fast3dGui::ImGuiBackendNewFrame() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mBackendWindow->GetWindowBackend()) {
 #ifdef ENABLE_OPENGL
         case WindowBackend::FAST3D_SDL_OPENGL:
             ImGui_ImplOpenGL3_NewFrame();
@@ -225,8 +226,7 @@ void Fast3dGui::ImGuiBackendNewFrame() {
 }
 
 void Fast3dGui::ImGuiWMNewFrame() {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mWindow->GetWindowBackend()) {
         case WindowBackend::FAST3D_SDL_OPENGL:
         case WindowBackend::FAST3D_SDL_METAL:
             ImGui_ImplSDL2_NewFrame();
@@ -242,8 +242,7 @@ void Fast3dGui::ImGuiWMNewFrame() {
 }
 
 void Fast3dGui::ImGuiRenderDrawData(ImDrawData* data) {
-    auto window = Ship::Context::GetInstance()->GetWindow();
-    switch (window->GetWindowBackend()) {
+    switch (mWindow->GetWindowBackend()) {
 #ifdef ENABLE_OPENGL
         case WindowBackend::FAST3D_SDL_OPENGL:
             ImGui_ImplOpenGL3_RenderDrawData(data);
@@ -273,9 +272,8 @@ void Fast3dGui::DrawFloatingWindows() {
         return;
     }
 
-    auto window = Ship::Context::GetInstance()->GetWindow();
     // OpenGL requires extra platform handling for the GL context
-    if (window->GetWindowBackend() == WindowBackend::FAST3D_SDL_OPENGL && mImpl.Opengl.Context != nullptr) {
+    if (mWindow->GetWindowBackend() == WindowBackend::FAST3D_SDL_OPENGL && mImpl.Opengl.Context != nullptr) {
         // Backup window and context before calling RenderPlatformWindowsDefault
         SDL_Window* backupCurrentWindow = SDL_GL_GetCurrentWindow();
         SDL_GLContext backupCurrentContext = SDL_GL_GetCurrentContext();
