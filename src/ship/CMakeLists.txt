@@ -21,6 +21,10 @@ if (NOT PIPEWIRE_FOUND)
     list(FILTER Source_Files__Audio EXCLUDE REGEX "audio/PipeWireAudioPlayer.*")
 endif()
 
+if (NOT ENABLE_FLUIDSYNTH)
+    list(FILTER Source_Files__Audio EXCLUDE REGEX "audio/FluidSynthBackend.*")
+endif()
+
 source_group("audio" FILES ${Source_Files__Audio})
 target_sources(libultraship PRIVATE ${Source_Files__Audio})
 
