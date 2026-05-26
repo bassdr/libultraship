@@ -31,7 +31,7 @@ public:
     virtual void Render(float* out, uint32_t frameCount) = 0;
 
     // Return true if this backend produces its own audio and the N64
-    // synthesis pipeline should be skipped.
+    // synthesis pipeline should be skipped entirely.
     virtual bool BypassN64Synthesis() const = 0;
 };
 
