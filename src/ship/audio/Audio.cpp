@@ -36,9 +36,7 @@ void Audio::InitAudioPlayer() {
 
     if (mAudioPlayer && !mAudioPlayer->Init()) {
         // Failed to initialize system audio player.
-        // Fallback to Null if the native system player does not work. That path
-        // re-enters InitAudioPlayer (and fires the hook for the Null player), so
-        // return here to avoid also firing it for the failed player.
+        // Fallback to Null if the native system player does not work.
         SetCurrentAudioBackend(AudioBackend::NUL);
         return;
     }
@@ -160,10 +158,6 @@ void Audio::SetCurrentAudioBackend(AudioBackend backend) {
     }
     mConfig->Save();
 
-    // The new player inherits the float-pipeline mode from mAudioSettings (kept
-    // authoritative by SetUseFloatPipeline), so it comes up in the correct mode
-    // by construction. InitAudioPlayer's hook then re-attaches any instance-bound
-    // state (e.g. the FluidSynth mix source).
     InitAudioPlayer();
 }
 
