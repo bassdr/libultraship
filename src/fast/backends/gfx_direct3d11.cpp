@@ -1502,7 +1502,8 @@ std::optional<std::string> dx_include_fs(const std::string& path) {
     init->Type = (uint32_t)Ship::ResourceType::Shader;
     init->ByteOrder = Ship::Endianness::Native;
     init->Format = RESOURCE_FORMAT_BINARY;
-    auto res = static_pointer_cast<Ship::Shader>(sDX11ResourceManager->LoadResource(path, false, init));
+    auto res = static_pointer_cast<Ship::Shader>(
+        Ship::Context::GetRawInstance()->GetResourceManager()->LoadResource(path, true, init));
     if (res == nullptr) {
         return std::nullopt;
     }
@@ -1588,7 +1589,7 @@ std::string gfx_direct3d_common_build_shader(size_t& numFloats, const CCFeatures
         path = std::string(shaderName) + ".hlsl";
     }
 
-    auto res = static_pointer_cast<Ship::Shader>(sDX11ResourceManager->LoadResource(path, false, init));
+    auto res = static_pointer_cast<Ship::Shader>(SohResourceManager()->LoadResource(path, true, init));
 
     if (res == nullptr) {
         SPDLOG_ERROR("Failed to load directx shader '{}', missing f3d.o2r?", path);
