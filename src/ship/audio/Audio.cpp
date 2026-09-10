@@ -1,7 +1,15 @@
 #include "ship/audio/Audio.h"
 
+#ifdef _WIN32
+#include "ship/audio/WasapiAudioPlayer.h"
+#endif
+
 #ifdef __APPLE__
 #include "ship/audio/CoreAudioAudioPlayer.h"
+#endif
+
+#if ENABLE_SDL3
+#include "ship/audio/SDL3AudioPlayer.h"
 #endif
 
 #include <stdexcept>
@@ -27,6 +35,11 @@ void Audio::InitAudioPlayer() {
             mAudioPlayer = std::make_shared<CoreAudioAudioPlayer>(this->mAudioSettings);
             break;
 #endif
+#if ENABLE_SDL3
+        case AudioBackend::SDL3:
+            mAudioPlayer = std::make_shared<SDL3AudioPlayer>(this->mAudioSettings);
+            break;
+#endif
         case AudioBackend::SDL:
             mAudioPlayer = std::make_shared<SDLAudioPlayer>(this->mAudioSettings);
             break;
@@ -49,6 +62,9 @@ void Audio::OnInit(const nlohmann::json& /*initArgs*/) {
 #endif
 #ifdef __APPLE__
     mAvailableAudioBackends->push_back(AudioBackend::COREAUDIO);
+#endif
+#if ENABLE_SDL3
+    mAvailableAudioBackends->push_back(AudioBackend::SDL3);
 #endif
     mAvailableAudioBackends->push_back(AudioBackend::SDL);
     mAvailableAudioBackends->push_back(AudioBackend::NUL);
@@ -87,18 +103,27 @@ AudioBackend Audio::GetSavedAudioBackend() {
         return AudioBackend::SDL;
     }
 
+    if (backendName == "sdl3") {
+        return AudioBackend::SDL3;
+    }
+
     if (backendName == "null") {
         return AudioBackend::NUL;
     }
 
     SPDLOG_TRACE("Could not find AudioBackend matching value from config file ({}). Returning default AudioBackend.",
                  backendName);
+
 #ifdef _WIN32
     return AudioBackend::WASAPI;
 #endif
 
 #ifdef __APPLE__
     return AudioBackend::COREAUDIO;
+#endif
+
+#if ENABLE_SDL3
+    return AudioBackend::SDL3;
 #endif
 
     return AudioBackend::SDL;
@@ -117,6 +142,9 @@ void Audio::SetCurrentAudioBackend(AudioBackend backend) {
             break;
         case AudioBackend::SDL:
             config->SetString("Window.AudioBackend", "sdl");
+            break;
+        case AudioBackend::SDL3:
+            mConfig->SetString("Window.AudioBackend", "sdl3");
             break;
         case AudioBackend::NUL:
             config->SetString("Window.AudioBackend", "null");
