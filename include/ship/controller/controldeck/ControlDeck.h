@@ -130,6 +130,15 @@ class ControlDeck : public Component {
 
   protected:
     /**
+     * @brief Resolves the console variables and builds the global SDL device settings.
+     *
+     * Deferred to here because a port may construct its own ControlDeck and hand it to
+     * Context::CreateDefaultInstance(), which creates the ConsoleVariable component
+     * afterwards; at construction time there is nothing to resolve against.
+     */
+    void OnInit(const nlohmann::json& initArgs = nlohmann::json::object()) override;
+
+    /**
      * @brief Returns true if *all* registered blockers have blocked game input.
      *
      * Used internally by WriteToPad() implementations to decide whether to pass
@@ -147,6 +156,17 @@ class ControlDeck : public Component {
     std::unordered_map<CONTROLLERBUTTONS_T, std::string> mButtonNames;
     std::shared_ptr<Window> mWindow;
     std::shared_ptr<ConsoleVariable> mConsoleVariables;
+
+  public:
+    /**
+     * @brief Injects the ConsoleVariable dependency after construction.
+     *
+     * Context::CreateDefaultInstance() takes a caller-constructed ControlDeck and creates the
+     * ConsoleVariable component afterwards, so it cannot be supplied to the constructor.
+     */
+    void SetConsoleVariables(std::shared_ptr<ConsoleVariable> consoleVariables) {
+        mConsoleVariables = std::move(consoleVariables);
+    }
     std::shared_ptr<WheelHandler> mWheelHandler;
 
     /** @brief Returns the cached Window component. */
