@@ -17,7 +17,6 @@ ControlDeck::ControlDeck(std::vector<CONTROLLERBUTTONS_T> additionalBitmasks,
                          std::shared_ptr<Window> window, std::shared_ptr<ConsoleVariable> consoleVariable)
     : Component("ControlDeck"), mWindow(std::move(window)), mConsoleVariables(std::move(consoleVariable)) {
     mConnectedPhysicalDeviceManager = std::make_shared<ConnectedPhysicalDeviceManager>();
-    mGlobalSDLDeviceSettings = std::make_shared<GlobalSDLDeviceSettings>(mConsoleVariables);
     mControllerDefaultMappings = controllerDefaultMappings == nullptr ? std::make_shared<ControllerDefaultMappings>()
                                                                       : controllerDefaultMappings;
 }
@@ -29,6 +28,10 @@ ControlDeck::~ControlDeck() {
 void ControlDeck::Init(uint8_t* controllerBits) {
     mControllerBits = controllerBits;
     *mControllerBits |= 1 << 0;
+
+    // This overload marks the component initialized itself, so OnInit never runs for a deck
+    // brought up this way.
+    EnsureGlobalSDLDeviceSettings();
 
     mWheelHandler = std::make_shared<WheelHandler>(GetWindow());
 
@@ -122,6 +125,25 @@ void ControlDeck::UnblockGameInput(int32_t blockId) {
 
 std::shared_ptr<ConnectedPhysicalDeviceManager> ControlDeck::GetConnectedPhysicalDeviceManager() {
     return mConnectedPhysicalDeviceManager;
+}
+
+void ControlDeck::OnInit(const nlohmann::json& initArgs) {
+    Component::OnInit(initArgs);
+
+    if (mConsoleVariables == nullptr) {
+        auto context = GetFirstInParents<Context>();
+        if (context != nullptr) {
+            mConsoleVariables = context->GetFirstInChildren<ConsoleVariable>();
+        }
+    }
+
+    EnsureGlobalSDLDeviceSettings();
+}
+
+void ControlDeck::EnsureGlobalSDLDeviceSettings() {
+    if (mGlobalSDLDeviceSettings == nullptr) {
+        mGlobalSDLDeviceSettings = std::make_shared<GlobalSDLDeviceSettings>(mConsoleVariables);
+    }
 }
 
 std::shared_ptr<GlobalSDLDeviceSettings> ControlDeck::GetGlobalSDLDeviceSettings() {
