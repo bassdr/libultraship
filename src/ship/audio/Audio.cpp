@@ -1,13 +1,5 @@
 #include "ship/audio/Audio.h"
 
-#ifdef _WIN32
-#include "ship/audio/WasapiAudioPlayer.h"
-#endif
-
-#ifdef __APPLE__
-#include "ship/audio/CoreAudioAudioPlayer.h"
-#endif
-
 #include <stdexcept>
 #include "ship/core/Context.h"
 #include "ship/config/Config.h"
@@ -21,16 +13,6 @@ Audio::~Audio() {
 
 void Audio::InitAudioPlayer() {
     switch (GetCurrentAudioBackend()) {
-#ifdef _WIN32
-        case AudioBackend::WASAPI:
-            mAudioPlayer = std::make_shared<WasapiAudioPlayer>(this->mAudioSettings);
-            break;
-#endif
-#ifdef __APPLE__
-        case AudioBackend::COREAUDIO:
-            mAudioPlayer = std::make_shared<CoreAudioAudioPlayer>(this->mAudioSettings);
-            break;
-#endif
         case AudioBackend::SDL:
             mAudioPlayer = std::make_shared<SDLAudioPlayer>(this->mAudioSettings);
             break;
@@ -48,14 +30,7 @@ void Audio::InitAudioPlayer() {
 
 void Audio::OnInit(const nlohmann::json& /*initArgs*/) {
     mAvailableAudioBackends = std::make_shared<std::vector<AudioBackend>>();
-#ifdef _WIN32
-    mAvailableAudioBackends->push_back(AudioBackend::WASAPI);
-#endif
-#ifdef __APPLE__
-    mAvailableAudioBackends->push_back(AudioBackend::COREAUDIO);
-#endif
     mAvailableAudioBackends->push_back(AudioBackend::SDL);
-    mAvailableAudioBackends->push_back(AudioBackend::NUL);
 
     SetAudioChannels(GetSavedAudioChannelsSetting());
     SetCurrentAudioBackend(GetSavedAudioBackend());
@@ -72,46 +47,28 @@ AudioBackend Audio::GetCurrentAudioBackend() {
 AudioBackend Audio::GetSavedAudioBackend() {
     auto config = GetConfig();
     std::string backendName = config->GetString("Window.AudioBackend");
-    if (backendName == "wasapi") {
-        return AudioBackend::WASAPI;
-    }
 
-    // Migrate pulse player in config to sdl
-    if (backendName == "pulse") {
+    // The sdl player is SDL3 and the only backend; every retired name migrates to it.
+    if (backendName == "pulse" || backendName == "wasapi" || backendName == "coreaudio" || backendName == "sdl3") {
         config->SetString("Window.AudioBackend", "sdl");
         config->Save();
         return AudioBackend::SDL;
-    }
-
-    if (backendName == "coreaudio") {
-        return AudioBackend::COREAUDIO;
     }
 
     if (backendName == "sdl") {
         return AudioBackend::SDL;
     }
 
-    // The sdl player is SDL3 itself now, so the separate sdl3 backend is gone.
-    if (backendName == "sdl3") {
+    // Null is the runtime fallback when no device opens, never a saved choice: the picker is
+    // disabled with one backend, so a persisted "null" would be an unrecoverable mute.
+    if (backendName == "null") {
         config->SetString("Window.AudioBackend", "sdl");
         config->Save();
         return AudioBackend::SDL;
     }
 
-    if (backendName == "null") {
-        return AudioBackend::NUL;
-    }
-
     SPDLOG_TRACE("Could not find AudioBackend matching value from config file ({}). Returning default AudioBackend.",
                  backendName);
-
-#ifdef _WIN32
-    return AudioBackend::WASAPI;
-#endif
-
-#ifdef __APPLE__
-    return AudioBackend::COREAUDIO;
-#endif
 
     return AudioBackend::SDL;
 }
@@ -121,12 +78,6 @@ void Audio::SetCurrentAudioBackend(AudioBackend backend) {
     mAudioBackend = backend;
 
     switch (backend) {
-        case AudioBackend::WASAPI:
-            config->SetString("Window.AudioBackend", "wasapi");
-            break;
-        case AudioBackend::COREAUDIO:
-            config->SetString("Window.AudioBackend", "coreaudio");
-            break;
         case AudioBackend::SDL:
             config->SetString("Window.AudioBackend", "sdl");
             break;

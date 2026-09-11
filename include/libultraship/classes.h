@@ -48,7 +48,6 @@
 #include "ship/audio/Audio.h"
 #include "ship/audio/AudioPlayer.h"
 #if defined(_WIN32)
-#include "ship/audio/WasapiAudioPlayer.h"
 #endif
 #include "ship/audio/SDLAudioPlayer.h"
 #include "ship/events/EventSystem.h"

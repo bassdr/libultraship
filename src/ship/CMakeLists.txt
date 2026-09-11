@@ -17,11 +17,9 @@ target_sources(libultraship PRIVATE ${Source_Files__Actions})
 file(GLOB Source_Files__Audio RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "audio/*.cpp")
 
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    list(FILTER Source_Files__Audio EXCLUDE REGEX "audio/WasapiAudioPlayer.*")
 endif()
 
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(FILTER Source_Files__Audio EXCLUDE REGEX "audio/CoreAudioAudioPlayer.*")
 endif()
 
 if (NOT SDL3_FOUND)

@@ -24,8 +24,8 @@ struct AudioSettings {
  *
  * AudioPlayer owns the audio device lifecycle (DoInit / DoClose) and the optional
  * SoundMatrixDecoder that converts stereo input to 5.1 surround. Concrete
- * subclasses implement DoInit(), DoClose(), and DoPlay() for each supported platform
- * (SDL3, CoreAudio, WASAPI, or a null no-op).
+ * subclasses implement DoInit(), DoClose(), and DoPlay(): SDL3 on every platform, or a
+ * null no-op when no device can be opened.
  *
  * Obtain the active instance from Context::GetAudio() → Audio::GetAudioPlayer().
  */
@@ -153,14 +153,6 @@ class AudioPlayer {
     bool mInitialized = false;
 };
 } // namespace Ship
-
-#ifdef _WIN32
-#include "WasapiAudioPlayer.h"
-#endif
-
-#ifdef __APPLE__
-#include "CoreAudioAudioPlayer.h"
-#endif
 
 #include "SDLAudioPlayer.h"
 #include "NullAudioPlayer.h"
