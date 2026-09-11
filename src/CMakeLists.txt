@@ -91,9 +91,7 @@ add_subdirectory("libultraship")
 # SDL2 the rest of the engine uses for window / input / ImGui.
 find_package(SDL3 CONFIG QUIET)
 if(SDL3_FOUND)
-    target_compile_definitions(libultraship PRIVATE ENABLE_SDL3=1)
 
-    # SDL3 is needed at build time for HEADERS ONLY. SDL3AudioPlayer.cpp loads the
     # SDL3 library at runtime (dlopen / LoadLibrary, local visibility) and calls it
     # through resolved function pointers, so we deliberately do NOT link it.
     #
@@ -109,7 +107,6 @@ if(SDL3_FOUND)
     target_link_libraries(libultraship PRIVATE ${CMAKE_DL_LIBS})
     message(STATUS "libultraship: SDL3 found - SDL3 audio backend enabled (loaded at runtime)")
 else()
-    target_compile_definitions(libultraship PRIVATE ENABLE_SDL3=0)
     message(STATUS "libultraship: SDL3 not found - SDL3 audio backend disabled")
 endif()
 

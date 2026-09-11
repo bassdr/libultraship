@@ -25,7 +25,6 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif()
 
 if (NOT SDL3_FOUND)
-    list(FILTER Source_Files__Audio EXCLUDE REGEX "audio/SDL3AudioPlayer.*")
 endif()
 
 source_group("audio" FILES ${Source_Files__Audio})
