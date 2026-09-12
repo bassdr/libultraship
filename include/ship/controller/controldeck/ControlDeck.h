@@ -168,9 +168,7 @@ class ControlDeck : public Component {
      * Context::CreateDefaultInstance() takes a caller-constructed ControlDeck and creates the
      * ConsoleVariable component afterwards, so it cannot be supplied to the constructor.
      */
-    void SetConsoleVariables(std::shared_ptr<ConsoleVariable> consoleVariables) {
-        mConsoleVariables = std::move(consoleVariables);
-    }
+    void SetConsoleVariables(std::shared_ptr<ConsoleVariable> consoleVariables);
 
     /**
      * @brief Injects the Window dependency after construction.
@@ -178,9 +176,7 @@ class ControlDeck : public Component {
      * A port that builds its Window and its ControlDeck side by side has neither to give the
      * other, so whichever it constructs first reaches the factory without this.
      */
-    void SetWindow(std::shared_ptr<Window> window) {
-        mWindow = std::move(window);
-    }
+    void SetWindow(std::shared_ptr<Window> window);
     std::shared_ptr<WheelHandler> mWheelHandler;
 
     /** @brief Returns the cached Window component. */

@@ -175,6 +175,25 @@ std::string ControlDeck::GetButtonNameForBitmask(CONTROLLERBUTTONS_T bitmask) {
     return mButtonNames[bitmask];
 }
 
+void ControlDeck::SetConsoleVariables(std::shared_ptr<ConsoleVariable> consoleVariables) {
+    mConsoleVariables = std::move(consoleVariables);
+    // The ports were built in the constructor, before this existed.
+    for (const auto& port : mPorts) {
+        if (port != nullptr && port->GetConnectedController() != nullptr) {
+            port->GetConnectedController()->SetConsoleVariable(mConsoleVariables);
+        }
+    }
+}
+
+void ControlDeck::SetWindow(std::shared_ptr<Window> window) {
+    mWindow = std::move(window);
+    for (const auto& port : mPorts) {
+        if (port != nullptr && port->GetConnectedController() != nullptr) {
+            port->GetConnectedController()->SetWindow(mWindow);
+        }
+    }
+}
+
 std::shared_ptr<Window> ControlDeck::GetWindow() const {
     if (!mWindow) {
         throw std::runtime_error("ControlDeck requires Window dependency");
