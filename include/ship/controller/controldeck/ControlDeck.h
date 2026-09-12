@@ -167,6 +167,16 @@ class ControlDeck : public Component {
     void SetConsoleVariables(std::shared_ptr<ConsoleVariable> consoleVariables) {
         mConsoleVariables = std::move(consoleVariables);
     }
+
+    /**
+     * @brief Injects the Window dependency after construction.
+     *
+     * A port that builds its Window and its ControlDeck side by side has neither to give the
+     * other, so whichever it constructs first reaches the factory without this.
+     */
+    void SetWindow(std::shared_ptr<Window> window) {
+        mWindow = std::move(window);
+    }
     std::shared_ptr<WheelHandler> mWheelHandler;
 
     /** @brief Returns the cached Window component. */

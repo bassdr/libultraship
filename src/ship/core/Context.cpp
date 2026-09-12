@@ -144,6 +144,7 @@ std::shared_ptr<Context> Context::CreateDefaultInstance(const std::string& name,
     }
     if (auto deck = std::dynamic_pointer_cast<ControlDeck>(controlDeck)) {
         deck->SetConsoleVariables(consoleVariables);
+        deck->SetWindow(std::dynamic_pointer_cast<Window>(window));
     }
 
     // ---- Thread Pool ----
