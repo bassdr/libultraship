@@ -29,6 +29,10 @@ void ControlDeck::Init(uint8_t* controllerBits) {
     mControllerBits = controllerBits;
     *mControllerBits |= 1 << 0;
 
+    // This overload marks the component initialized itself, so OnInit never runs for a deck
+    // brought up this way.
+    EnsureGlobalSDLDeviceSettings();
+
     mWheelHandler = std::make_shared<WheelHandler>(GetWindow());
 
     auto self = std::dynamic_pointer_cast<ControlDeck>(GetSharedComponent());
@@ -133,7 +137,13 @@ void ControlDeck::OnInit(const nlohmann::json& initArgs) {
         }
     }
 
-    mGlobalSDLDeviceSettings = std::make_shared<GlobalSDLDeviceSettings>(mConsoleVariables);
+    EnsureGlobalSDLDeviceSettings();
+}
+
+void ControlDeck::EnsureGlobalSDLDeviceSettings() {
+    if (mGlobalSDLDeviceSettings == nullptr) {
+        mGlobalSDLDeviceSettings = std::make_shared<GlobalSDLDeviceSettings>(mConsoleVariables);
+    }
 }
 
 std::shared_ptr<GlobalSDLDeviceSettings> ControlDeck::GetGlobalSDLDeviceSettings() {

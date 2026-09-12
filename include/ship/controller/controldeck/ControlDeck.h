@@ -147,6 +147,10 @@ class ControlDeck : public Component {
     bool AllGameInputBlocked();
     std::vector<std::shared_ptr<ControlPort>> mPorts = {}; ///< One entry per controller port.
 
+  protected:
+    /** @brief Builds GlobalSDLDeviceSettings once mConsoleVariables is available. */
+    void EnsureGlobalSDLDeviceSettings();
+
   private:
     uint8_t* mControllerBits = nullptr;
     std::unordered_map<int32_t, bool> mGameInputBlockers;
