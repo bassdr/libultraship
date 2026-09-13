@@ -98,9 +98,12 @@ bool glob_match(char const* pat, char const* str) {
             } break;
             case '\\':
                 d = *pat++;
-// [[fallthrough]] in C is C23; this target is built as C11, so MSVC would reject it.
-#if __STDC_VERSION__ >= 202311L || defined(__GNUC__) || defined(__clang__)
+// The bracket spelling is C23; this target is built as C11, where only the GNU
+// attribute is available and MSVC has neither.
+#if __STDC_VERSION__ >= 202311L
                 [[fallthrough]];
+#elif defined(__GNUC__) || defined(__clang__)
+                __attribute__((fallthrough));
 #endif
             default: /* Literal character */
             literal:
