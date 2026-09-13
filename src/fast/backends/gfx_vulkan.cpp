@@ -2198,6 +2198,11 @@ std::unordered_map<std::pair<float, float>, uint16_t, hash_pair_ff>
 GfxRenderingAPIVK::GetPixelDepth(int fbId, const std::set<std::pair<float, float>>& coordinates) {
     std::unordered_map<std::pair<float, float>, uint16_t, hash_pair_ff> res;
     if (fbId >= (int)mFramebuffers.size() || coordinates.empty() || !mFrameActive) {
+        // Callers index the result by coordinate, so answer for every one asked about even when
+        // there is nothing to read - outside a recorded frame, or for a framebuffer we don't have.
+        for (const auto& coord : coordinates) {
+            res.emplace(coord, 0);
+        }
         return res;
     }
     FramebufferVK& fb = mFramebuffers[fbId];
