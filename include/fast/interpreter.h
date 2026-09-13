@@ -466,6 +466,15 @@ class Interpreter {
     void Run(Gfx* commands, const std::unordered_map<Mtx*, MtxF>& mtx_replacements,
              const std::unordered_map<Gfx*, Gfx*>& dl_replacements);
     void EndFrame();
+
+    // Transform vertices here instead of in the vertex shader. Costs CPU time and saves
+    // GPU time; the two paths are meant to render identically.
+    void SetCpuVertexTransform(bool enabled) {
+        mCpuVertexTransform = enabled;
+    }
+    [[nodiscard]] bool GetCpuVertexTransform() const {
+        return mCpuVertexTransform;
+    }
     void HandleWindowEvents();
     bool IsFrameReady();
     bool ViewportMatchesRendererResolution();
@@ -685,6 +694,9 @@ class Interpreter {
     TransformUniforms mTransform{};
 
     uint8_t AppendMtxHistory(const float m[4][4], float aspectScale);
+    // When set, vertices are transformed here and handed to the shader as finished clip
+    // coordinates through the identity palette entry, as the rect paths do.
+    bool mCpuVertexTransform = false;
     uint8_t GetIdentityMtxSlot();
 
     // GPU palettization: the import in progress uploads raw CI indices instead of

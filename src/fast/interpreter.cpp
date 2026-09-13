@@ -2473,6 +2473,7 @@ void Interpreter::GfxSpVertex(size_t n_vertices, size_t dest_index, const F3DVtx
         mMtxCurrentAspect = aspectScale;
         mMtxCurrentValid = true;
     }
+    const uint8_t identitySlot = mCpuVertexTransform ? GetIdentityMtxSlot() : 0;
 
     for (size_t i = 0; i < n_vertices; i++, dest_index++) {
         const F3DVtx_t* v = &vertices[i].v;
@@ -2483,11 +2484,24 @@ void Interpreter::GfxSpVertex(size_t n_vertices, size_t dest_index, const F3DVtx
             return;
         }
 
-        d->x = v->ob[0];
-        d->y = v->ob[1];
-        d->z = v->ob[2];
-        d->w = 1.0f;
-        d->mtx_slot = mMtxHistoryCurrent;
+        if (mCpuVertexTransform) {
+            float clip[4];
+            for (int c = 0; c < 4; c++) {
+                clip[c] = v->ob[0] * mRsp->MP_matrix[0][c] + v->ob[1] * mRsp->MP_matrix[1][c] +
+                          v->ob[2] * mRsp->MP_matrix[2][c] + mRsp->MP_matrix[3][c];
+            }
+            d->x = clip[0] * aspectScale;
+            d->y = clip[1];
+            d->z = clip[2];
+            d->w = clip[3];
+            d->mtx_slot = identitySlot;
+        } else {
+            d->x = v->ob[0];
+            d->y = v->ob[1];
+            d->z = v->ob[2];
+            d->w = 1.0f;
+            d->mtx_slot = mMtxHistoryCurrent;
+        }
 
         short U = v->tc[0] * mRsp->texture_scaling_factor.s >> 16;
         short V = v->tc[1] * mRsp->texture_scaling_factor.t >> 16;
