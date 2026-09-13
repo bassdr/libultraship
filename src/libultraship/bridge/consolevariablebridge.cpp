@@ -10,7 +10,7 @@ std::shared_ptr<Ship::ConsoleVariable> CVarGetConsoleVariable() {
     return sConsoleVariable;
 }
 
-std::shared_ptr<Ship::CVar> CVarGet(const char* name) {
+Ship::CVar* CVarGet(const char* name) {
     auto cvars = CVarGetConsoleVariable();
     return cvars ? cvars->Get(name) : nullptr;
 }
