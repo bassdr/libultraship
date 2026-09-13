@@ -681,13 +681,15 @@ class Interpreter {
     // references an entry; GfxSpTri1 maps the referenced entries onto the small
     // per-draw matrix palette uploaded to the vertex shader.
     static constexpr size_t MTX_HISTORY_SIZE = 64;
+    // Entry 0 holds the identity and is never recycled: vertices that carry finished clip
+    // coordinates reference it, and the ring would otherwise overwrite it between the load
+    // that tagged them and the draw that reads it.
+    static constexpr uint8_t MTX_IDENTITY_SLOT = 0;
     float mMtxHistory[MTX_HISTORY_SIZE][4][4]{};
-    uint8_t mMtxHistoryHead = 0;
+    uint8_t mMtxHistoryHead = MTX_IDENTITY_SLOT + 1;
     uint8_t mMtxHistoryCurrent = 0;
     bool mMtxCurrentValid = false;
     float mMtxCurrentAspect = 1.0f;
-    uint8_t mMtxIdentityEntry = 0;
-    bool mMtxIdentityValid = false;
     // Per-batch mapping from history entry -> palette slot (-1 = not in palette)
     int8_t mBatchSlotForHistory[MTX_HISTORY_SIZE]{};
     uint8_t mBatchMtxCount = 0;

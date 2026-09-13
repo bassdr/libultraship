@@ -122,6 +122,9 @@ Interpreter::Interpreter() {
     mBufVbo = new float[MAX_TRI_BUFFER * (32 * 3)];
     memset(mBatchSlotForHistory, -1, sizeof(mBatchSlotForHistory));
     memset(mPaletteRingTexture, 0xFF, sizeof(mPaletteRingTexture));
+    for (int i = 0; i < 4; i++) {
+        mMtxHistory[MTX_IDENTITY_SLOT][i][i] = 1.0f;
+    }
 }
 
 Interpreter::~Interpreter() {
@@ -163,14 +166,14 @@ void Interpreter::Flush() {
 uint8_t Interpreter::AppendMtxHistory(const float m[4][4], float aspectScale) {
     uint8_t slot = mMtxHistoryHead;
     mMtxHistoryHead = (mMtxHistoryHead + 1) % MTX_HISTORY_SIZE;
+    if (mMtxHistoryHead == MTX_IDENTITY_SLOT) {
+        mMtxHistoryHead = MTX_IDENTITY_SLOT + 1;
+    }
     for (int i = 0; i < 4; i++) {
         mMtxHistory[slot][i][0] = m[i][0] * aspectScale;
         mMtxHistory[slot][i][1] = m[i][1];
         mMtxHistory[slot][i][2] = m[i][2];
         mMtxHistory[slot][i][3] = m[i][3];
-    }
-    if (mMtxIdentityValid && slot == mMtxIdentityEntry) {
-        mMtxIdentityValid = false;
     }
     if (mMtxCurrentValid && slot == mMtxHistoryCurrent) {
         mMtxCurrentValid = false;
@@ -186,12 +189,7 @@ uint8_t Interpreter::AppendMtxHistory(const float m[4][4], float aspectScale) {
 // vertex pool; they reference an identity palette entry so the vertex shader
 // passes them through unchanged.
 uint8_t Interpreter::GetIdentityMtxSlot() {
-    if (!mMtxIdentityValid) {
-        static const float identity[4][4] = { { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 } };
-        mMtxIdentityEntry = AppendMtxHistory(identity, 1.0f);
-        mMtxIdentityValid = true;
-    }
-    return mMtxIdentityEntry;
+    return MTX_IDENTITY_SLOT;
 }
 
 // The color-combiner formula runs on the GPU; this latches its constant operands
