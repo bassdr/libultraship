@@ -117,6 +117,8 @@ LUS makes use of the following third party libraries and resources:
   - [SDL3](https://github.com/libsdl-org/SDL/blob/main/LICENSE.txt) (zlib) windowing and input backend.
   - [glew](https://github.com/nigels-com/glew/blob/master/LICENSE.txt) (modified BSD-3-Clause and MIT) OpenGL extension loading backend (Windows/macOS).
   - [metal-cpp](https://github.com/briaguya-ai/single-header-metal-cpp/blob/macOS13_iOS16/LICENSE) (Apache 2.0) Apple Metal rendering backend (macOS/iOS).
+  - [Vulkan-Headers](https://github.com/KhronosGroup/Vulkan-Headers/blob/main/LICENSE.md) (Apache 2.0 / MIT) Vulkan rendering backend.
+  - [shaderc](https://github.com/google/shaderc/blob/main/LICENSE) (Apache 2.0) compiles the Vulkan backend's GLSL to SPIR-V at runtime.
 - [StormLib](https://github.com/ladislav-zezula/StormLib/blob/master/LICENSE) (MIT) create and read `.mpq` compatible archive files.
   - [zlib](https://github.com/madler/zlib/blob/develop/LICENSE) (zlib) compression.
   - [bzip2](https://github.com/libarchive/bzip2?tab=License-1-ov-file#readme) (bzip2) compression.
