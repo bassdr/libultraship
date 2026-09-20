@@ -19,11 +19,19 @@
 namespace Ship {
 static std::weak_ptr<CrashHandler> sCrashHandler;
 
-// The dialog is worth it for a user who double-clicked the game; from a terminal it just
-// blocks the report that already went to stderr. SHIP_NO_CRASH_DIALOG skips it.
+// The dialog is worth it for a user who double-clicked the game, so a release build keeps
+// it; anywhere else it blocks a report that already went to stderr. SHIP_NO_CRASH_DIALOG
+// decides either way, 0 asking for the dialog back.
+#ifndef SHIP_CRASH_DIALOG_DEFAULT
+#define SHIP_CRASH_DIALOG_DEFAULT 1
+#endif
+
 static bool CrashDialogSuppressed() {
     const char* value = std::getenv("SHIP_NO_CRASH_DIALOG");
-    return value != nullptr && value[0] != '\0' && std::strcmp(value, "0") != 0;
+    if (value == nullptr || value[0] == '\0') {
+        return SHIP_CRASH_DIALOG_DEFAULT == 0;
+    }
+    return std::strcmp(value, "0") != 0;
 }
 
 static std::string GetCrashAppName() {

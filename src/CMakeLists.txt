@@ -231,6 +231,9 @@ endif()
 
 target_compile_definitions(libultraship PRIVATE ${GBI_UCODE})
 
+# Only a release build ships to someone who would read a crash dialog rather than stderr.
+target_compile_definitions(libultraship PRIVATE SHIP_CRASH_DIALOG_DEFAULT=$<IF:$<CONFIG:Release>,1,0>)
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         WIN32
