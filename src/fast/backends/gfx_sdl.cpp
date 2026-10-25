@@ -808,8 +808,12 @@ void GfxWindowBackendSDL::SwapBuffersBegin() {
 
     if (mVsyncEnabled != nextVsyncEnabled) {
         mVsyncEnabled = nextVsyncEnabled;
-        SDL_GL_SetSwapInterval(mVsyncEnabled ? 1 : 0);
-        SDL_SetRenderVSync(mRenderer, mVsyncEnabled ? 1 : 0);
+        if (mCtx != nullptr) {
+            SDL_GL_SetSwapInterval(mVsyncEnabled ? 1 : 0);
+        }
+        if (mRenderer != nullptr) {
+            SDL_SetRenderVSync(mRenderer, mVsyncEnabled ? 1 : 0);
+        }
     }
 
     SyncFramerateWithTime();
