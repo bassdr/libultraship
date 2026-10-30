@@ -4094,6 +4094,8 @@ void Interpreter::GfxDpImageRectangle(int32_t tile, int32_t w, int32_t h, int32_
     auto& loadtex = mRdp->loaded_texture[mRdp->texture_tile[tile].tmem_index];
     loadtex.full_image_line_size_bytes = loadtex.line_size_bytes = mRdp->texture_tile[tile].line_size_bytes;
     loadtex.size_bytes = loadtex.orig_size_bytes = loadtex.line_size_bytes * h;
+    // A stale HD scale would shrink the fb to a fraction of its size and tile it.
+    loadtex.raw_tex_metadata = {};
 
     uint8_t saved_tile = mRdp->first_tile_index;
     if (saved_tile != tile) {
