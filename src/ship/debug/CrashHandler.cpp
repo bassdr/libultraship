@@ -487,7 +487,7 @@ void CrashHandler::PrintStack(CONTEXT* ctx) {
 static bool WriteMiniDump(PEXCEPTION_POINTERS ex, std::string& outPath) {
 #ifndef _M_ARM64
     std::string dumpPath =
-        Context::GetPathRelativeToAppDirectory("logs/" + Context::GetRawInstance()->GetName() + "-crash.dmp");
+        Context::GetPathRelativeToAppDirectory("logs/" + GetCrashAppName() + "-crash.dmp");
 
     std::error_code ec;
     std::filesystem::create_directories(std::filesystem::path(dumpPath).parent_path(), ec);
