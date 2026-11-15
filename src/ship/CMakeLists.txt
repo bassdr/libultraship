@@ -1,20 +1,20 @@
 #=================== Core ===================
 
-file(GLOB Source_Files__Core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "core/*.cpp")
+file(GLOB Source_Files__Core RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "core/*.cpp")
 
 source_group("core" FILES ${Source_Files__Core})
 target_sources(libultraship PRIVATE ${Source_Files__Core})
 
 #=================== Actions ===================
 
-file(GLOB Source_Files__Actions RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "actions/*.cpp")
+file(GLOB Source_Files__Actions RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "actions/*.cpp")
 
 source_group("actions" FILES ${Source_Files__Actions})
 target_sources(libultraship PRIVATE ${Source_Files__Actions})
 
 #=================== Audio ===================
 
-file(GLOB Source_Files__Audio RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "audio/*.cpp")
+file(GLOB Source_Files__Audio RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "audio/*.cpp")
 
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
@@ -30,42 +30,42 @@ target_sources(libultraship PRIVATE ${Source_Files__Audio})
 
 #=================== Controller ===================
 
-file(GLOB_RECURSE Source_Files__Controller RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "controller/*.cpp")
+file(GLOB_RECURSE Source_Files__Controller RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "controller/*.cpp")
 
 source_group("controller" FILES ${Source_Files__Controller})
 target_sources(libultraship PRIVATE ${Source_Files__Controller})
 
 #=================== Config ===================
 
-file(GLOB Source_Files__Config RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "config/*.cpp")
+file(GLOB Source_Files__Config RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "config/*.cpp")
 
 source_group("config" FILES ${Source_Files__Config})
 target_sources(libultraship PRIVATE ${Source_Files__Config})
 
 #=================== Debug ===================
 
-file(GLOB Source_Files__Debug RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "debug/*.cpp")
+file(GLOB Source_Files__Debug RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "debug/*.cpp")
 
 source_group("debug" FILES ${Source_Files__Debug})
 target_sources(libultraship PRIVATE ${Source_Files__Debug})
 
 #=================== Window ===================
 
-file(GLOB Source_Files__Window RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "window/*.cpp")
+file(GLOB Source_Files__Window RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "window/*.cpp")
 
 source_group("window" FILES ${Source_Files__Window})
 target_sources(libultraship PRIVATE ${Source_Files__Window})
 
 #=================== Gui ===================
 
-file(GLOB_RECURSE Source_Files__Window__Gui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "window/gui/*.cpp")
+file(GLOB_RECURSE Source_Files__Window__Gui RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "window/gui/*.cpp")
 
 source_group("window/gui" FILES ${Source_Files__Window__Gui})
 target_sources(libultraship PRIVATE ${Source_Files__Window__Gui})
 
 #=================== Utils ===================
 
-file(GLOB_RECURSE Source_Files__Utils RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "utils/*.cpp" "utils/*.c")
+file(GLOB_RECURSE Source_Files__Utils RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "utils/*.cpp" "utils/*.c")
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "iOS")
     list(APPEND Source_Files__Utils ${CMAKE_CURRENT_SOURCE_DIR}/utils/AppleFolderManager.mm)
@@ -80,14 +80,14 @@ target_sources(libultraship PRIVATE ${Source_Files__Utils})
 
 #=================== Events ===================
 
-file(GLOB_RECURSE Source_Files__Events RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "events/*.cpp")
+file(GLOB_RECURSE Source_Files__Events RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "events/*.cpp")
 source_group("events" FILES ${Source_Files__Events})
 target_sources(libultraship PRIVATE ${Source_Files__Events})
 
 #=================== Scripting ===================
 
 if(ENABLE_SCRIPTING)
-    file(GLOB_RECURSE Source_Files__Scripting RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "scripting/*.cpp")
+    file(GLOB_RECURSE Source_Files__Scripting RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "scripting/*.cpp")
     source_group("scripting" FILES ${Source_Files__Scripting})
     target_sources(libultraship PRIVATE ${Source_Files__Scripting})
 endif()
@@ -95,7 +95,7 @@ endif()
 #=================== Security ===================
 
 if(ENABLE_SCRIPTING)
-    file(GLOB_RECURSE Source_Files__Security RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "security/*.cpp")
+    file(GLOB_RECURSE Source_Files__Security RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "security/*.cpp")
     source_group("security" FILES ${Source_Files__Security})
     target_sources(libultraship PRIVATE ${Source_Files__Security})
 endif()
@@ -113,28 +113,28 @@ target_sources(libultraship PRIVATE ${Source_Files__Port})
 
 #=================== Resource ===================
 
-file(GLOB Source_Files__Resource RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "resource/*.cpp")
+file(GLOB Source_Files__Resource RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "resource/*.cpp")
 source_group("resource" FILES ${Source_Files__Resource})
 
-file(GLOB Source_Files__Resource__Types RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "resource/type/*.cpp")
+file(GLOB Source_Files__Resource__Types RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "resource/type/*.cpp")
 source_group("resource/type" FILES ${Source_Files__Resource__Types})
 
-file(GLOB Source_Files__Resource__Factories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "resource/factory/*.cpp")
+file(GLOB Source_Files__Resource__Factories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "resource/factory/*.cpp")
 source_group("resource/factory" FILES ${Source_Files__Resource__Factories})
 
-file(GLOB Source_Files__Resource__Archive RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "resource/archive/*.cpp")
+file(GLOB Source_Files__Resource__Archive RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "resource/archive/*.cpp")
 source_group("resource/archive" FILES ${Source_Files__Resource__Archive})
 
 target_sources(libultraship PRIVATE ${Source_Files__Resource} ${Source_Files__Resource__Types} ${Source_Files__Resource__Factories} ${Source_Files__Resource__Archive})
 
 #=================== Log ===================
 
-file(GLOB Source_Files__Log RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "log/*.cpp")
+file(GLOB Source_Files__Log RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "log/*.cpp")
 source_group("log" FILES ${Source_Files__Log})
 target_sources(libultraship PRIVATE ${Source_Files__Log})
 
 #=================== Thread ===================
 
-file(GLOB Source_Files__Thread RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "thread/*.cpp")
+file(GLOB Source_Files__Thread RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "thread/*.cpp")
 source_group("thread" FILES ${Source_Files__Thread})
 target_sources(libultraship PRIVATE ${Source_Files__Thread})
