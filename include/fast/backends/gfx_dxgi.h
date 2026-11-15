@@ -138,7 +138,7 @@ class GfxWindowBackendDXGI final : public GfxWindowBackend {
     HANDLE mTimer;
     bool mTearingSupport;
     bool mMousePressed[5];
-    LARGE_INTEGER mPreviousPresentTime;
+    LARGE_INTEGER mPreviousPresentTime = {};
 
     RAWINPUTDEVICE mRawInputDevice[1];
     POINT mPrevMouseCursorPos;
